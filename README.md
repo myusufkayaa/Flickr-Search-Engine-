@@ -1,1 +1,1 @@
-Flickr Search Engine
+Flickr com.example.flickrsearchengine.activities.SearchActivity Engine

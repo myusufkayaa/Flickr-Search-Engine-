@@ -12,9 +12,9 @@ import androidx.room.RoomDatabase;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 import androidx.sqlite.db.SupportSQLiteOpenHelper;
 
-import com.example.flickrsearchengine.itemObjects.FavItem;
+import com.example.flickrsearchengine.itemObjects.Item;
 
-@Database(entities = {FavItem.class}, version = 1,exportSchema = false)
+@Database(entities = {Item.class}, version = 1,exportSchema = false)
 public abstract class mDatabase extends RoomDatabase {
     private static final String DB_NAME="veri.db";
 
@@ -44,8 +44,6 @@ public abstract class mDatabase extends RoomDatabase {
                     .build();        }
         return instance;
     }
-
-
 
     public abstract ItemDao getItemDao();
 

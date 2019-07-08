@@ -1,7 +1,6 @@
 package com.example.flickrsearchengine.adapters;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Parcelable;
 import android.view.LayoutInflater;
@@ -17,8 +16,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.flickrsearchengine.R;
 import com.example.flickrsearchengine.activities.ShowActivity;
-import com.example.flickrsearchengine.database.ItemDao;
-import com.example.flickrsearchengine.itemObjects.FavItem;
 import com.example.flickrsearchengine.itemObjects.Item;
 import com.example.flickrsearchengine.viewModels.FavItemViewModel;
 import com.squareup.picasso.Picasso;
@@ -27,12 +24,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FavAdapter extends RecyclerView.Adapter<FavAdapter.ViewHolder> {
-    List<FavItem> itemList;
+    List<Item> itemList;
     LayoutInflater layoutInflater;
     FavItemViewModel viewModel;
     Activity context;
 
-    public void setFavItems(List<FavItem> itemList){
+    public void setFavItems(List<Item> itemList){
         this.itemList=itemList;
         notifyDataSetChanged();
     }
@@ -53,7 +50,7 @@ public class FavAdapter extends RecyclerView.Adapter<FavAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
-        final FavItem item=itemList.get(position);
+        final Item item=itemList.get(position);
         if (item!=null) {
                 holder.likeButton.setText("DISLIKE");
                 holder.txtTitle.setText(item.getTitle());

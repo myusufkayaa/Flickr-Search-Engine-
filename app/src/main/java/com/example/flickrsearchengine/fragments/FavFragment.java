@@ -1,8 +1,6 @@
 package com.example.flickrsearchengine.fragments;
 
-import android.app.ProgressDialog;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,7 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.flickrsearchengine.R;
 import com.example.flickrsearchengine.adapters.FavAdapter;
-import com.example.flickrsearchengine.itemObjects.FavItem;
+import com.example.flickrsearchengine.itemObjects.Item;
 import com.example.flickrsearchengine.viewModels.FavItemViewModel;
 
 import java.util.List;
@@ -49,10 +47,10 @@ public class FavFragment extends Fragment {
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         favAdapter=new FavAdapter(viewModel,getActivity());
         recyclerView.setAdapter(favAdapter);
-        viewModel.getAllFavItems().observe(this, new Observer<List<FavItem>>() {
+        viewModel.getAllFavItems().observe(this, new Observer<List<Item>>() {
             @Override
-            public void onChanged(List<FavItem> favItems) {
-                favAdapter.setFavItems(favItems);
+            public void onChanged(List<Item> items) {
+                favAdapter.setFavItems(items);
             }
         });
 

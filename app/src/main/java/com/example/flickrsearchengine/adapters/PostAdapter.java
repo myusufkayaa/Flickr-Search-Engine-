@@ -2,6 +2,7 @@ package com.example.flickrsearchengine.adapters;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,9 +14,7 @@ import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.flickrsearchengine.itemObjects.FavItem;
 import com.example.flickrsearchengine.itemObjects.Item;
-import com.example.flickrsearchengine.database.ItemDao;
 import com.example.flickrsearchengine.R;
 import com.example.flickrsearchengine.activities.ShowActivity;
 import com.example.flickrsearchengine.viewModels.FavItemViewModel;
@@ -30,7 +29,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
     Activity context;
     String searchWord;
     FavItemViewModel viewModel;
-  static   List<FavItem> favItemList;
+    static List<Item> favItemList;
 
 
     public  PostAdapter (ArrayList<Item> itemList, Activity context, String searchWord,FavItemViewModel viewModel){
@@ -58,11 +57,11 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
     public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
         final Item item=itemList.get(position);
         if (item!=null) {
-            if (item.getId()!=null && item.getDescription()!=null && item.getLargeImg()!=null && item.getLat() != 0 && item.getLng() != 0 && item.getOwner()!=null&& item.getSmallImg()!=null && item.getTitle()!=null) {
+            if (item.getPhotoId()!=0 && item.getDescription()!=null && item.getLargeImg()!=null && item.getLat() != 0 && item.getLng() != 0 && item.getOwner()!=null&& item.getSmallImg()!=null && item.getTitle()!=null) {
                 holder.likeButton.setText("LIKE");
-                if (favItemList!=null){
-                    for (FavItem favItem:favItemList){
-                        if (item.getId().equals(String.valueOf(favItem.getFavId()))){
+                if (itemList !=null && favItemList !=null){
+                    for (Item favItem: favItemList){
+                        if (item.getPhotoId()==favItem.getPhotoId()){
                             holder.likeButton.setText("DISLIKE");
                         }
                     }
@@ -82,7 +81,9 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
                         intent.putExtra("position", position);
                         intent.putParcelableArrayListExtra("list", itemList);
                         intent.putExtra("searchWord", searchWord);
+                        intent.putParcelableArrayListExtra("favlist", (ArrayList<? extends Parcelable>) favItemList);
                         context.startActivityForResult(intent,1);
+
 
                     }
                 });
@@ -93,12 +94,12 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
                             @Override
                             public void run() {
                                 if (holder.likeButton.getText().equals("LIKE")){
-                                    viewModel.insert(new FavItem(Long.parseLong(item.getId()),item.getTitle(),item.getDescription(),item.getOwner(),item.getLargeImg(),item.getSmallImg(),item.getLat(),item.getLng()));
+                                    viewModel.insert(item);
                                     holder.likeButton.setText("DISLIKE");
                                 }else{
-                                    for (FavItem favItem: favItemList)
-                                        if (item.getId().equals(String.valueOf(favItem.getFavId()))){
-                                            viewModel.delete(favItem);
+                                    for (Item item : itemList)
+                                        if (item.getPhotoId()==item.getPhotoId()){
+                                            viewModel.delete(item);
                                             holder.likeButton.setText("LIKE");
                                         }
 
@@ -106,16 +107,14 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
                                 }
                             }
                         }).start();
-
                     }
                 });
-
             }
         }
     }
 
-    public void setFavItemList(List<FavItem> favItemList){
-        this.favItemList=favItemList;
+    public void setFavItemList(List<Item> itemList){
+        this.favItemList = itemList;
         notifyDataSetChanged();
     }
 
@@ -123,6 +122,11 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
     @Override
     public int getItemCount() {
         return itemList.size();
+    }
+
+    public void setItemList(ArrayList<Item> itemList) {
+        this.itemList = itemList;
+        notifyDataSetChanged();
     }
 
     class ViewHolder extends RecyclerView.ViewHolder{

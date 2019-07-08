@@ -7,7 +7,7 @@ import androidx.room.Insert;
 import androidx.room.Query;
 import androidx.room.Update;
 
-import com.example.flickrsearchengine.itemObjects.FavItem;
+import com.example.flickrsearchengine.itemObjects.Item;
 
 import java.util.List;
 
@@ -15,18 +15,18 @@ import java.util.List;
 public interface ItemDao {
 
     @Query("SELECT * FROM fav_item")
-   LiveData <List<FavItem>>getAllItems();
-    @Query("SELECT * FROM fav_item WHERE favId=:id")
-    FavItem getItem(long id);
-@Query("DELETE FROM fav_item WHERE favId=:id")
+   LiveData <List<Item>>getAllItems();
+    @Query("SELECT * FROM fav_item WHERE photoId=:id")
+    Item getItem(long id);
+@Query("DELETE FROM fav_item WHERE photoId=:id")
     int delItem(long id);
     @Insert
-    void insert(FavItem... items);
+    void insert(Item... items);
     @Update
-    void update(FavItem... items);
+    void update(Item... items);
 
     @Delete
-    void delete(FavItem... items);
+    void delete(Item... items);
 
 
 }

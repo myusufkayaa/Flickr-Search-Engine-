@@ -3,11 +3,39 @@ package com.example.flickrsearchengine.itemObjects;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import androidx.room.ColumnInfo;
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
+
+@Entity(tableName = "fav_item")
 public class Item implements Parcelable {
+    @PrimaryKey(autoGenerate = true)
+    private long photoId;
+    private String title;
+    private String description;
+    private String owner;
+    private String largeImg;
+    private String smallImg;
+    private  double lat, lng;
+
+    public Item(long id, String title, String description, String owner, String largeImg, String smallImg, double lat, double lng) {
+        this.photoId = id;
+        this.title = title;
+        this.description = description;
+        this.owner = owner;
+        this.largeImg = largeImg;
+        this.smallImg = smallImg;
+        this.lat = lat;
+        this.lng = lng;
+    }
+
+    public Item() {
+    }
+
 
 
     protected Item(Parcel in) {
-        id = in.readString();
+        photoId = in.readLong();
         title = in.readString();
         description = in.readString();
         owner = in.readString();
@@ -15,20 +43,6 @@ public class Item implements Parcelable {
         smallImg = in.readString();
         lat = in.readDouble();
         lng = in.readDouble();
-    }
-    public Item(FavItem favItem){
-        id=String.valueOf(favItem.getFavId());
-        title=favItem.getTitle();
-        description=favItem.getDescription();
-        owner=favItem.getOwner();
-        largeImg=favItem.getLargeImg();
-        smallImg=favItem.getSmallImg();
-        lat=favItem.getLat();
-        lng=favItem.getLng();
-
-    }
-
-    public Item() {
     }
 
     public static final Creator<Item> CREATOR = new Creator<Item>() {
@@ -43,78 +57,72 @@ public class Item implements Parcelable {
         }
     };
 
-    public String getId() {
-        return id;
+
+    public long getPhotoId() {
+        return photoId;
     }
 
-    public void setId(String id) {
-        this.id = id;
-    }
-    private String id;
-
-    private String title;
-    private String description;
-    private String owner;
-    private String largeImg;
-    private String smallImg;
-    private  double lat, lng;
-
-    public double getLat() {
-        return lat;
+    public void setPhotoId(long photoId) {
+        this.photoId = photoId;
     }
 
-    public void setLat(double lat) {
-        this.lat = lat;
-    }
-
-    public double getLng() {
-        return lng;
-    }
-
-    public void setLng(double lng) {
-        this.lng = lng;
-    }
 
     public String getTitle() {
         return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
     }
 
     public String getDescription() {
         return description;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
     public String getOwner() {
         return owner;
-    }
-
-    public void setOwner(String owner) {
-        this.owner = owner;
     }
 
     public String getLargeImg() {
         return largeImg;
     }
 
-    public void setLargeImg(String largeImg) {
-        this.largeImg = largeImg;
-    }
-
     public String getSmallImg() {
         return smallImg;
+    }
+
+    public double getLat() {
+        return lat;
+    }
+
+    public double getLng() {
+        return lng;
+    }
+
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public void setOwner(String owner) {
+        this.owner = owner;
+    }
+
+    public void setLargeImg(String largeImg) {
+        this.largeImg = largeImg;
     }
 
     public void setSmallImg(String smallImg) {
         this.smallImg = smallImg;
     }
 
+    public void setLat(double lat) {
+        this.lat = lat;
+    }
+
+    public void setLng(double lng) {
+        this.lng = lng;
+    }
 
     @Override
     public int describeContents() {
@@ -123,7 +131,7 @@ public class Item implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel parcel, int i) {
-        parcel.writeString(id);
+        parcel.writeLong(photoId);
         parcel.writeString(title);
         parcel.writeString(description);
         parcel.writeString(owner);
@@ -131,6 +139,11 @@ public class Item implements Parcelable {
         parcel.writeString(smallImg);
         parcel.writeDouble(lat);
         parcel.writeDouble(lng);
+    }
+
+    public boolean avaliable() {
+
+        return getPhotoId() != 0 && getDescription() != null && getLargeImg() != null && getLat() != 0 && getLng() != 0 && getOwner() != null && getSmallImg() != null && getTitle() != null;
 
     }
 }

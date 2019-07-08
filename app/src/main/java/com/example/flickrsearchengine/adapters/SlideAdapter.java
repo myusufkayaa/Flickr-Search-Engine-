@@ -12,7 +12,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.viewpager.widget.PagerAdapter;
 
-import com.example.flickrsearchengine.itemObjects.FavItem;
 import com.example.flickrsearchengine.itemObjects.Item;
 import com.example.flickrsearchengine.R;
 import com.google.android.gms.maps.GoogleMap;
@@ -28,7 +27,7 @@ public class SlideAdapter extends PagerAdapter {
     TextView textView;
     GoogleMap map;
     ImageView imageView;
-    List<FavItem> favItemList;
+    List<Item> favItemList;
 
 
     public SlideAdapter(Activity context, ArrayList<Item> itemList, TextView textView, GoogleMap map) {
@@ -38,7 +37,7 @@ public class SlideAdapter extends PagerAdapter {
         this.map = map;
 
     }
-    public SlideAdapter(Activity context, List<FavItem> itemList, TextView textView, GoogleMap map) {
+    public SlideAdapter(Activity context, List<Item> itemList, TextView textView, GoogleMap map) {
         this.context = context;
         this.favItemList = itemList;
         this.textView = textView;
@@ -48,9 +47,9 @@ public class SlideAdapter extends PagerAdapter {
 
     @Override
     public int getCount() {
-        if (itemList!=null)
+       if (itemList!=null)
         return itemList.size();
-        else return favItemList.size();
+       else return favItemList.size();
     }
 
     @Override
@@ -98,7 +97,12 @@ public class SlideAdapter extends PagerAdapter {
     public int getItemPosition(@NonNull Object object) {
         return PagerAdapter.POSITION_NONE;
     }
-    public  void setItemList(ArrayList<Item> itemList){
+    public  void setFavItemList(List<Item> itemList){
+        this.favItemList=itemList;
+        notifyDataSetChanged();
+    }
+    public void setItemList(ArrayList<Item> itemList){
         this.itemList=itemList;
+        notifyDataSetChanged();
     }
 }

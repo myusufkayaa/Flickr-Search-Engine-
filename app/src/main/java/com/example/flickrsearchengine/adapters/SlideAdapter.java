@@ -65,11 +65,11 @@ public class SlideAdapter extends PagerAdapter {
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View itemView = inflater.inflate(R.layout.slider, container,false);
         imageView = itemView.findViewById(R.id.adapterImage);
-        imageView.setImageResource(R.drawable.com_facebook_button_background);
+
         if (itemList!=null){
             try {
                 Picasso.get()
-                        .load(itemList.get(position).getLargeImg()).placeholder(R.drawable.ic_launcher_foreground)
+                        .load(itemList.get(position).getLargeImg())
                         .into(imageView);
             } catch (Exception ex) {
                 Log.d("catch", "Hata var");
@@ -77,7 +77,7 @@ public class SlideAdapter extends PagerAdapter {
         }else{
             try {
                 Picasso.get()
-                        .load(favItemList.get(position).getLargeImg()).placeholder(R.drawable.ic_launcher_foreground)
+                        .load(favItemList.get(position).getLargeImg())
                         .into(imageView);
             } catch (Exception ex) {
                 Log.d("catch", "Hata var");

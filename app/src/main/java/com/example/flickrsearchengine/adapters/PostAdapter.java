@@ -49,12 +49,8 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
         return viewHolder;
     }
 
-    public PostAdapter(FavItemViewModel viewModel) {
-        this.viewModel = viewModel;
-    }
-
     @Override
-    public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
         final Item item=itemList.get(position);
         if (item!=null) {
             if (item.getPhotoId()!=0 && item.getDescription()!=null && item.getLargeImg()!=null && item.getLat() != 0 && item.getLng() != 0 && item.getOwner()!=null&& item.getSmallImg()!=null && item.getTitle()!=null) {
@@ -70,7 +66,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
                 holder.txtTitle.setText(item.getTitle());
                 holder.txtOwner.setText(item.getOwner());
                 holder.txtDescription.setText(item.getDescription());
-                Picasso.get().load(item.getSmallImg()).placeholder(R.drawable.ic_launcher_foreground).into(holder.image);
+                Picasso.get().load(item.getSmallImg()).into(holder.image);
                 holder.layout.setTag(holder);
                 holder.layout.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -95,12 +91,22 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
                             public void run() {
                                 if (holder.likeButton.getText().equals("LIKE")){
                                     viewModel.insert(item);
-                                    holder.likeButton.setText("DISLIKE");
+                                    holder.likeButton.post(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            holder.likeButton.setText("DISLIKE");
+                                        }
+                                    });
                                 }else{
-                                    for (Item item : itemList)
-                                        if (item.getPhotoId()==item.getPhotoId()){
+                                    for (Item item : favItemList)
+                                        if (item.getPhotoId()==itemList.get(position).getPhotoId()){
                                             viewModel.delete(item);
-                                            holder.likeButton.setText("LIKE");
+                                            holder.likeButton.post(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    holder.likeButton.setText("LIKE");
+                                                }
+                                            });
                                         }
 
 
@@ -118,7 +124,6 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
         notifyDataSetChanged();
     }
 
-
     @Override
     public int getItemCount() {
         return itemList.size();
@@ -128,7 +133,6 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
         this.itemList = itemList;
         notifyDataSetChanged();
     }
-
     class ViewHolder extends RecyclerView.ViewHolder{
         TextView txtOwner,txtTitle,txtDescription;
         ImageView image;

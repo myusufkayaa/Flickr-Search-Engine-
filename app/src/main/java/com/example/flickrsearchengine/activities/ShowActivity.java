@@ -124,7 +124,7 @@ public class ShowActivity extends AppCompatActivity implements OnMapReadyCallbac
             public void onChanged(List<Item> items) {
                 itemList.addAll(items);
                 slideAdapter.setItemList(itemList);
-                if (progressDialog.isShowing()){
+                if (progressDialog.isShowing()) {
                     progressDialog.dismiss();
                 }
             }
@@ -156,7 +156,7 @@ public class ShowActivity extends AppCompatActivity implements OnMapReadyCallbac
                 Marker m = map.addMarker(a);
                 m.setPosition(location);
                 map.animateCamera(CameraUpdateFactory.newLatLngZoom(location, 10));
-                if ((position % 25)==24) {
+                if (position ==itemList.size()-1) {
                     searchFragmentViewModel.calledPost(searchWord, (itemList.size() / 25) + 1);
                     progressDialog.setMessage("Devamı Yükleniyor...");
                     progressDialog.show();
@@ -232,7 +232,9 @@ public class ShowActivity extends AppCompatActivity implements OnMapReadyCallbac
             } else if (position == favItemList.size()) {
                 position--;
             }
-            slideTitle.setText(favItemList.get(position).getTitle());
+            if (favItemList.size() != 0) {
+                slideTitle.setText(favItemList.get(position).getTitle());
+            }
         }
     }
 

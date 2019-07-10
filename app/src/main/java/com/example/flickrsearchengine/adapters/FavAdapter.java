@@ -56,7 +56,7 @@ public class FavAdapter extends RecyclerView.Adapter<FavAdapter.ViewHolder> {
                 holder.txtTitle.setText(item.getTitle());
                 holder.txtOwner.setText(item.getOwner());
                 holder.txtDescription.setText(item.getDescription());
-                Picasso.get().load(item.getSmallImg()).placeholder(R.drawable.ic_launcher_foreground).into(holder.image);
+                Picasso.get().load(item.getSmallImg()).into(holder.image);
                 holder.layout.setTag(holder);
                 holder.layout.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -78,10 +78,20 @@ public class FavAdapter extends RecyclerView.Adapter<FavAdapter.ViewHolder> {
                             public void run() {
                                 if (holder.likeButton.getText().equals("LIKE")){
                                     viewModel.insert(item);
-                                    holder.likeButton.setText("DISLIKE");
+                                    holder.likeButton.post(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            holder.likeButton.setText("DISLIKE");
+                                        }
+                                    });
                                 }else{
                                     viewModel.delete(item);
-                                    holder.likeButton.setText("LIKE");
+                                    holder.likeButton.post(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            holder.likeButton.setText("LIKE");
+                                        }
+                                    });
                                 }
                             }
                         }).start();

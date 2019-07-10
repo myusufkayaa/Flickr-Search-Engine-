@@ -4,7 +4,6 @@ import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -114,7 +113,7 @@ public class SearchFragment extends Fragment implements SearchDialog.SearchDialo
                     totalItems = layoutManager.getItemCount();
                     scrollOutItems = layoutManager.findFirstCompletelyVisibleItemPosition();
                     if (currentItems + scrollOutItems >= totalItems) {
-                        searchFragmentViewModel.setIsBack(false);
+                        searchFragmentViewModel.setIsBack(false, tempSearchWord);
                         progressBar.setVisibility(View.VISIBLE);
                         isLoading = true;
                         searchFragmentViewModel.search(tempSearchWord, (tempItemList.size() / 25) + 1);
@@ -132,7 +131,7 @@ public class SearchFragment extends Fragment implements SearchDialog.SearchDialo
 
     @Override
     public void applyTexts(String searchedWord) {
-        searchFragmentViewModel.setIsBack(false);
+        searchFragmentViewModel.setIsBack(false,searchedWord);
         this.searchWord = searchedWord;
         tempItemList.clear();
         progressDialog = new ProgressDialog(getContext());
@@ -140,7 +139,7 @@ public class SearchFragment extends Fragment implements SearchDialog.SearchDialo
         progressDialog.setOnCancelListener(new Dialog.OnCancelListener() {
             @Override
             public void onCancel(DialogInterface dialogInterface) {
-                searchFragmentViewModel.setIsBack(true);
+                searchFragmentViewModel.setIsBack(true,tempSearchWord);
                 searchWord = tempSearchWord;
                 updateTmpLst();
             }

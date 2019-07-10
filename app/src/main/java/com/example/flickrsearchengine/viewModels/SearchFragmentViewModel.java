@@ -48,12 +48,13 @@ public class SearchFragmentViewModel extends ViewModel {
        }
     }
 
-    public void setIsBack(boolean bool) {
+    public void setIsBack(boolean bool, String tmpWord) {
         isBack = bool;
+        this.searchWord=tmpWord;
+
     }
 
     public void search(String word, int page) {
-        // TODO !!!
         if (searchWord == null || searchWord.equals(word)) {
             searchWord = word;
             calledPost(word, page);

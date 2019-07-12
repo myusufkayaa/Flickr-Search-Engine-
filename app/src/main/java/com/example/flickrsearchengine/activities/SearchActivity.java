@@ -3,19 +3,23 @@ package com.example.flickrsearchengine.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
 import android.view.MenuItem;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.example.flickrsearchengine.fragments.FavFragment;
 import com.example.flickrsearchengine.R;
 import com.example.flickrsearchengine.fragments.SearchFragment;
-import com.example.flickrsearchengine.itemObjects.Item;
+import com.example.flickrsearchengine.Models.itemObjects.Item;
+import com.facebook.login.LoginManager;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.ArrayList;
 
@@ -24,11 +28,16 @@ public class SearchActivity extends AppCompatActivity{
     BottomNavigationView navigation;
     SearchFragment searchFragment;
     FavFragment favFragment;
+    private Toolbar toolbar;
+    FirebaseAuth mAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
+        mAuth=FirebaseAuth.getInstance();
+        toolbar= findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
         navigation=findViewById(R.id.bottomNavigationView);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
         searchFragment=new SearchFragment();
@@ -71,4 +80,23 @@ public class SearchActivity extends AppCompatActivity{
         super.onActivityResult(requestCode, resultCode, data);
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.toolbar_menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.signOut:
+                finish();
+                mAuth.signOut();
+                LoginManager.getInstance().logOut();
+                Intent intent=new Intent(getApplicationContext(),MainActivity.class);
+                startActivity(intent);
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 }

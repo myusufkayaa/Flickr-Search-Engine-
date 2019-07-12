@@ -1,5 +1,6 @@
 package com.example.flickrsearchengine.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -45,9 +46,17 @@ public class SignUpActivity extends AppCompatActivity {
     }
 
     public void signUp(View view){
-        if (txtMail.getText().toString().equals("")||txtMail.getText().toString().equals("")||txtPass2.getText().toString().equals("")) {
-            Toast.makeText(getApplicationContext(),"Lütfen Alanları Boş Bırakmayın",Toast.LENGTH_SHORT).show();
-            return;
+        if (txtMail.getText().toString().equals("")||txtPass.getText().toString().equals("")||txtPass2.getText().toString().equals("")) {
+            if (txtMail.getText().toString().equals("")){
+                txtMail.setError("Boş Bırakmayın");
+            }
+            if (txtPass.getText().toString().equals("")){
+                txtPass.setError("Boş Bırakmayın");
+            }
+            if (txtPass2.getText().toString().equals("")){
+                txtPass2.setError("Boş Bırakmayın");
+            }
+           return;
         }
         if (!txtPass.getText().toString().equals(txtPass2.getText().toString())){
             Toast.makeText(getApplicationContext(),"Parolalar Uyuşmuyor !!!!",Toast.LENGTH_SHORT).show();
@@ -66,6 +75,14 @@ public class SignUpActivity extends AppCompatActivity {
                 Toast.makeText(SignUpActivity.this,e.getLocalizedMessage(),Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    @Override
+    public void onBackPressed() {
+        Intent intent=new Intent(getApplicationContext(),MainActivity.class);
+        startActivity(intent);
+        finish();
+        super.onBackPressed();
     }
 }
 

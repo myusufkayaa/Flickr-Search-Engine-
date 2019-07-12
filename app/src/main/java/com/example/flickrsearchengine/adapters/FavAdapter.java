@@ -2,13 +2,13 @@ package com.example.flickrsearchengine.adapters;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -16,26 +16,30 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.flickrsearchengine.R;
 import com.example.flickrsearchengine.activities.ShowActivity;
-import com.example.flickrsearchengine.itemObjects.Item;
-import com.example.flickrsearchengine.viewModels.FavItemViewModel;
+import com.example.flickrsearchengine.Models.itemObjects.Item;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 public class FavAdapter extends RecyclerView.Adapter<FavAdapter.ViewHolder> {
-    List<Item> itemList;
+    ArrayList<Item> itemList;
     LayoutInflater layoutInflater;
-    FavItemViewModel viewModel;
     Activity context;
+    FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private FirebaseAuth mAuth = FirebaseAuth.getInstance();
 
-    public void setFavItems(List<Item> itemList){
+    public void setFavItems(ArrayList<Item> itemList){
         this.itemList=itemList;
         notifyDataSetChanged();
     }
 
-    public FavAdapter(FavItemViewModel viewModel, Activity context) {
-        this.viewModel=viewModel;
+    public FavAdapter(Activity context) {
         this.context=context;
     }
 
@@ -63,9 +67,8 @@ public class FavAdapter extends RecyclerView.Adapter<FavAdapter.ViewHolder> {
                     public void onClick(View view) {
                         ViewHolder holder = (ViewHolder) view.getTag();
                         int position = holder.getAdapterPosition();
-
                         Intent intent = new Intent(context, ShowActivity.class);
-                        intent.putParcelableArrayListExtra("favlist", (ArrayList<? extends Parcelable>) itemList);
+                        intent.putParcelableArrayListExtra("favlist", itemList);
                         intent.putExtra("favposition",position);
                         context.startActivityForResult(intent,1);
                     }
@@ -77,7 +80,20 @@ public class FavAdapter extends RecyclerView.Adapter<FavAdapter.ViewHolder> {
                             @Override
                             public void run() {
                                 if (holder.likeButton.getText().equals("LIKE")){
-                                    viewModel.insert(item);
+                                    Map<String, Object> post = new HashMap<>();
+                                    post.put("post", item);
+                                    db.collection(mAuth.getUid()).document(String.valueOf(item.getPhotoId())).set(post).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        @Override
+                                        public void onSuccess(Void aVoid) {
+
+                                        }
+                                    }).addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            Toast.makeText(context, e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+
+                                        }
+                                    });
                                     holder.likeButton.post(new Runnable() {
                                         @Override
                                         public void run() {
@@ -85,7 +101,12 @@ public class FavAdapter extends RecyclerView.Adapter<FavAdapter.ViewHolder> {
                                         }
                                     });
                                 }else{
-                                    viewModel.delete(item);
+                                    db.collection(mAuth.getUid()).document(String.valueOf(item.getPhotoId())).delete().addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            Toast.makeText(context,e.getLocalizedMessage(),Toast.LENGTH_LONG).show();
+                                        }
+                                    });
                                     holder.likeButton.post(new Runnable() {
                                         @Override
                                         public void run() {

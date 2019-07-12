@@ -21,11 +21,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.flickrsearchengine.R;
 import com.example.flickrsearchengine.adapters.PostAdapter;
 import com.example.flickrsearchengine.adapters.SearchDialog;
-import com.example.flickrsearchengine.itemObjects.Item;
-import com.example.flickrsearchengine.search.Post;
+import com.example.flickrsearchengine.Models.itemObjects.Item;
+import com.example.flickrsearchengine.Models.search.Post;
 import com.example.flickrsearchengine.service.ApiClient;
 import com.example.flickrsearchengine.service.RestInterface;
-import com.example.flickrsearchengine.viewModels.FavItemViewModel;
 import com.example.flickrsearchengine.viewModels.SearchFragmentViewModel;
 
 import java.util.ArrayList;
@@ -50,7 +49,6 @@ public class SearchFragment extends Fragment implements SearchDialog.SearchDialo
     ProgressBar progressBar;
     boolean isLoading = false;
     private View view;
-    private FavItemViewModel favItemViewModel;
     private SearchFragmentViewModel searchFragmentViewModel;
 
 
@@ -75,6 +73,7 @@ public class SearchFragment extends Fragment implements SearchDialog.SearchDialo
 
             init();
         }
+        postAdapter.notifyDataSetChanged();
         return view;
     }
 
@@ -93,14 +92,7 @@ public class SearchFragment extends Fragment implements SearchDialog.SearchDialo
         itemList = new ArrayList<>();
         tempItemList = new ArrayList<>();
         post = new Post();
-        favItemViewModel = ViewModelProviders.of(this).get(FavItemViewModel.class);
-        favItemViewModel.getAllFavItems().observe(this, new Observer<List<Item>>() {
-            @Override
-            public void onChanged(List<Item> items) {
-                postAdapter.setFavItemList(items);
-            }
-        });
-        postAdapter = new PostAdapter(itemList,getActivity(),searchWord,favItemViewModel);
+        postAdapter = new PostAdapter(itemList,getActivity(),searchWord);
         final LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), VERTICAL, false);
         layoutManager.scrollToPosition(0);
         recyclerView.setLayoutManager(layoutManager);
@@ -131,7 +123,7 @@ public class SearchFragment extends Fragment implements SearchDialog.SearchDialo
 
     @Override
     public void applyTexts(String searchedWord) {
-        searchFragmentViewModel.setIsBack(false,searchedWord);
+        searchFragmentViewModel.setIsBack(false,tempSearchWord);
         this.searchWord = searchedWord;
         tempItemList.clear();
         progressDialog = new ProgressDialog(getContext());
@@ -191,7 +183,7 @@ public class SearchFragment extends Fragment implements SearchDialog.SearchDialo
         tempItemList.addAll(list);
         searchFragmentViewModel.setTempItemList(tempItemList);
         callAdapter();
-
+        postAdapter.notifyDataSetChanged();
     }
 
 

@@ -6,14 +6,14 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.example.flickrsearchengine.geo.Geo;
-import com.example.flickrsearchengine.info.Info;
-import com.example.flickrsearchengine.itemObjects.Item;
-import com.example.flickrsearchengine.search.Photo;
-import com.example.flickrsearchengine.search.Post;
+import com.example.flickrsearchengine.Models.geo.Geo;
+import com.example.flickrsearchengine.Models.info.Info;
+import com.example.flickrsearchengine.Models.itemObjects.Item;
+import com.example.flickrsearchengine.Models.search.Photo;
+import com.example.flickrsearchengine.Models.search.Post;
 import com.example.flickrsearchengine.service.ApiClient;
 import com.example.flickrsearchengine.service.RestInterface;
-import com.example.flickrsearchengine.size.SizeExample;
+import com.example.flickrsearchengine.Models.size.SizeExample;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -72,7 +72,7 @@ public class SearchFragmentViewModel extends ViewModel {
         callGeo.enqueue(new Callback<Geo>() {
             @Override
             public void onResponse(Call<Geo> call, Response<Geo> response) {
-                if (!isBack) {
+                    if (!isBack) {
                     for (Item item : tempItemList) {
                         if (item.getPhotoId() == Long.parseLong(pId)) {
                             item.setLat(response.body().getPhoto().getLocation().getLatitude());
@@ -182,7 +182,6 @@ public class SearchFragmentViewModel extends ViewModel {
     }
 
     public void setLiveDataList() {
-
         if (itemControl(tempItemList)) {
             mItemList.setValue(tempItemList);
         }

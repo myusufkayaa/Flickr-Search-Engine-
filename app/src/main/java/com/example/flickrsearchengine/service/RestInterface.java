@@ -1,9 +1,9 @@
 package com.example.flickrsearchengine.service;
 
-import com.example.flickrsearchengine.geo.Geo;
-import com.example.flickrsearchengine.info.Info;
-import com.example.flickrsearchengine.search.Post;
-import com.example.flickrsearchengine.size.SizeExample;
+import com.example.flickrsearchengine.Models.geo.Geo;
+import com.example.flickrsearchengine.Models.info.Info;
+import com.example.flickrsearchengine.Models.search.Post;
+import com.example.flickrsearchengine.Models.size.SizeExample;
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Query;

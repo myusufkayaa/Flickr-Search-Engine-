@@ -2,7 +2,6 @@ package com.example.flickrsearchengine.adapters;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -16,7 +15,6 @@ import com.example.flickrsearchengine.R;
 public class SearchDialog extends AppCompatDialogFragment {
     private EditText searchText;
     private SearchDialogListener listener;
-    String searchedWord;
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder=new AlertDialog.Builder(getActivity());

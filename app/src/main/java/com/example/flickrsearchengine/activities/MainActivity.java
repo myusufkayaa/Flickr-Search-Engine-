@@ -6,7 +6,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -14,7 +13,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.flickrsearchengine.R;
-import com.example.flickrsearchengine.database.mDatabase;
 import com.facebook.AccessToken;
 import com.facebook.AccessTokenTracker;
 import com.facebook.CallbackManager;
@@ -40,7 +38,6 @@ public class MainActivity extends AppCompatActivity {
     private EditText txtPass;
     private Button loginButton;
     private CallbackManager callbackManager;
-    private mDatabase database;
     private FirebaseAuth mAuth;
     boolean isLogin=false;
 
@@ -52,7 +49,6 @@ public class MainActivity extends AppCompatActivity {
         txtSignUp = findViewById(R.id.textView);
         txtMail = findViewById(R.id.txtMail);
         txtPass = findViewById(R.id.txtPass);
-        database = (mDatabase) mDatabase.getInstance(getApplicationContext());
         fLoginButton = findViewById(R.id.fLoginButton);
         loginButton = findViewById(R.id.loginButton);
         mAuth = FirebaseAuth.getInstance();
@@ -88,6 +84,7 @@ public class MainActivity extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             Intent intent=new Intent(getApplicationContext(),SearchActivity.class);
                             startActivity(intent);
+                            finish();
                         } else {
 
                         }
@@ -121,9 +118,15 @@ public class MainActivity extends AppCompatActivity {
 
     public void giris(View view) {
         if (isLogin){
-            Toast.makeText(MainActivity.this,"Facebook Giriş",Toast.LENGTH_SHORT).show();
+            Toast.makeText(MainActivity.this,"Başarılı Giriş",Toast.LENGTH_SHORT).show();
             Intent intent=new Intent(getApplicationContext(),SearchActivity.class);
             startActivity(intent);
+            finish();
+            return;
+        }
+
+        if (txtMail.getText().toString().equals("")|| txtPass.getText().toString().equals("")){
+            Toast.makeText(MainActivity.this,"Gerekli alanları doldurun",Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -133,6 +136,7 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(MainActivity.this,"Başarılı Giriş",Toast.LENGTH_SHORT).show();
                 Intent intent=new Intent(getApplicationContext(),SearchActivity.class);
                 startActivity(intent);
+                finish();
             }
         }).addOnFailureListener(this, new OnFailureListener() {
             @Override
@@ -146,6 +150,7 @@ public class MainActivity extends AppCompatActivity {
     public void clickSignUp(View view) {
         Intent intent=new Intent(getApplicationContext(),SignUpActivity.class);
         startActivity(intent);
+        finish();
     }
     public void setLogin(){
         if (mAuth.getCurrentUser()==null){

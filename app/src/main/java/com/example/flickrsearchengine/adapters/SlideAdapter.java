@@ -12,7 +12,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.viewpager.widget.PagerAdapter;
 
-import com.example.flickrsearchengine.itemObjects.Item;
+import com.example.flickrsearchengine.Models.itemObjects.Item;
 import com.example.flickrsearchengine.R;
 import com.google.android.gms.maps.GoogleMap;
 import com.squareup.picasso.Picasso;
@@ -28,7 +28,6 @@ public class SlideAdapter extends PagerAdapter {
     GoogleMap map;
     ImageView imageView;
     List<Item> favItemList;
-
 
     public SlideAdapter(Activity context, ArrayList<Item> itemList, TextView textView, GoogleMap map) {
         this.context = context;

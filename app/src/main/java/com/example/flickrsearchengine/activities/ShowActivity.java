@@ -2,7 +2,6 @@ package com.example.flickrsearchengine.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
 import androidx.viewpager.widget.ViewPager;
 
 import android.app.ProgressDialog;
@@ -12,10 +11,9 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.example.flickrsearchengine.itemObjects.Item;
+import com.example.flickrsearchengine.Models.itemObjects.Item;
 import com.example.flickrsearchengine.R;
 import com.example.flickrsearchengine.adapters.SlideAdapter;
-import com.example.flickrsearchengine.viewModels.FavItemViewModel;
 import com.example.flickrsearchengine.viewModels.SearchFragmentViewModel;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -24,9 +22,18 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 
 public class ShowActivity extends AppCompatActivity implements OnMapReadyCallback {
     ProgressDialog progressDialog;
@@ -39,8 +46,9 @@ public class ShowActivity extends AppCompatActivity implements OnMapReadyCallbac
     int position;
     String searchWord;
     Button likeButton;
-    private FavItemViewModel viewModel;
     SearchFragmentViewModel searchFragmentViewModel;
+    FirebaseFirestore db;
+    FirebaseAuth mAuth;
 
 
     @Override
@@ -50,6 +58,8 @@ public class ShowActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     public void init() {
+        db = FirebaseFirestore.getInstance();
+        mAuth = FirebaseAuth.getInstance();
         searchFragmentViewModel = new SearchFragmentViewModel();
         searchFragmentViewModel.init();
         setContentView(R.layout.activity_show);
@@ -61,6 +71,21 @@ public class ShowActivity extends AppCompatActivity implements OnMapReadyCallbac
             mapFragment.getMapAsync(this);
         }
         getIncomingIntent();
+    }
+
+    private void setFavItemList() {
+        db.collection(mAuth.getUid())
+                .addSnapshotListener(new EventListener<QuerySnapshot>() {
+                    @Override
+                    public void onEvent(@javax.annotation.Nullable QuerySnapshot queryDocumentSnapshots, @javax.annotation.Nullable FirebaseFirestoreException e) {
+                        favItemList.clear();
+                        for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
+                            favItemList.add(new Item(document));
+                            if (slideAdapter == null) return;
+                            slideAdapter.setFavItemList(favItemList);
+                        }
+                    }
+                });
     }
 
     @Override
@@ -80,7 +105,6 @@ public class ShowActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     private void getIncomingIntent() {
-        viewModel = ViewModelProviders.of(this).get(FavItemViewModel.class);
         if (getIntent().hasExtra("position") && getIntent().hasExtra("list") && getIntent().hasExtra("searchWord") && getIntent().hasExtra("favlist")) {
             Bundle bundle = getIntent().getExtras();
             position = bundle.getInt("position", 0);
@@ -89,12 +113,6 @@ public class ShowActivity extends AppCompatActivity implements OnMapReadyCallbac
             favItemList = bundle.getParcelableArrayList("favlist");
             slideTitle.setText(itemList.get(position).getTitle());
             likeButton.setText("LIKE");
-            viewModel.getAllFavItems().observe(this, new Observer<List<Item>>() {
-                @Override
-                public void onChanged(List<Item> favItems) {
-                    favItemList = favItems;
-                }
-            });
             setButton(position);
             likeButton.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -102,7 +120,7 @@ public class ShowActivity extends AppCompatActivity implements OnMapReadyCallbac
                     clickLike(position);
                 }
             });
-        } else if (getIntent().hasExtra("favlist") && getIntent().hasExtra("favposition")) {
+        } else if (getIntent().hasExtra("favposition") && getIntent().hasExtra("favlist")) {
             favItemList = getIntent().getParcelableArrayListExtra("favlist");
             position = getIntent().getIntExtra("favposition", 0);
             slideTitle.setText(favItemList.get(position).getTitle());
@@ -131,6 +149,7 @@ public class ShowActivity extends AppCompatActivity implements OnMapReadyCallbac
         });
         viewPager = findViewById(R.id.viewPager);
         slideAdapter = new SlideAdapter(ShowActivity.this, itemList, slideTitle, map);
+        setFavItemList();
         viewPager.setAdapter(slideAdapter);
         viewPager.setCurrentItem(position);
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -156,7 +175,7 @@ public class ShowActivity extends AppCompatActivity implements OnMapReadyCallbac
                 Marker m = map.addMarker(a);
                 m.setPosition(location);
                 map.animateCamera(CameraUpdateFactory.newLatLngZoom(location, 10));
-                if (position ==itemList.size()-1) {
+                if (position == itemList.size() - 1) {
                     searchFragmentViewModel.calledPost(searchWord, (itemList.size() / 25) + 1);
                     progressDialog.setMessage("Devamı Yükleniyor...");
                     progressDialog.show();
@@ -210,12 +229,14 @@ public class ShowActivity extends AppCompatActivity implements OnMapReadyCallbac
     public void clickLike(int position) {
         if (itemList != null) {
             if (likeButton.getText().equals("LIKE")) {
-                viewModel.insert(itemList.get(position));
+                Map<String, Object> post = new HashMap<>();
+                post.put("post", itemList.get(position));
+                db.collection(mAuth.getUid()).document(String.valueOf(itemList.get(position).getPhotoId())).set(post);
                 likeButton.setText("DISLIKE");
             } else {
                 for (Item favItem : favItemList) {
                     if (itemList.get(position).getPhotoId() == favItem.getPhotoId()) {
-                        viewModel.delete(favItem);
+                        db.collection(mAuth.getUid()).document(String.valueOf(favItem.getPhotoId())).delete();
                         likeButton.setText("LIKE");
                     }
                 }
@@ -224,7 +245,7 @@ public class ShowActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
 
         if (likeButton.getText().equals("DISLIKE")) {
-            viewModel.delete(favItemList.get(position));
+            db.collection(mAuth.getUid()).document(String.valueOf(favItemList.get(position).getPhotoId())).delete();
             favItemList.remove(position);
             slideAdapter.notifyDataSetChanged();
             if (favItemList.size() == 0) {

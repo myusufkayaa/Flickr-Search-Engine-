@@ -6,6 +6,9 @@
     android:layout_height="match_parent"
     tools:context=".activities.SearchActivity"
     >
+    <include
+        android:id="@+id/toolbar"
+        layout="@layout/toolbar"></include>
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNavigationView"
@@ -22,7 +25,7 @@
         app:layout_constraintBottom_toTopOf="@+id/bottomNavigationView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toBottomOf="@+id/toolbar">
 
     </FrameLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

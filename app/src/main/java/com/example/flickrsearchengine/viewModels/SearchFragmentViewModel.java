@@ -68,7 +68,7 @@ public class SearchFragmentViewModel extends ViewModel {
 
 
     public void calledGeo(final String pId) {
-        Call<Geo> callGeo = restInterface.getGeo("flickr.photos.geo.getLocation", "c0b00b9ef6c886b9bc297f5e127d9f84", pId, "json", 1);
+        Call<Geo> callGeo = restInterface.getGeo("flickr.photos.geo.getLocation", "/* FLICKR API KEY*/", pId, "json", 1);
         callGeo.enqueue(new Callback<Geo>() {
             @Override
             public void onResponse(Call<Geo> call, Response<Geo> response) {
@@ -96,7 +96,7 @@ public class SearchFragmentViewModel extends ViewModel {
     }
 
     public void calledInfo(final String pId) {
-        Call<Info> callInfo = restInterface.getInfo("flickr.photos.getInfo", "c0b00b9ef6c886b9bc297f5e127d9f84", pId, "json", 1);
+        Call<Info> callInfo = restInterface.getInfo("flickr.photos.getInfo", "/* FLICKR API KEY*/", pId, "json", 1);
         callInfo.enqueue(new Callback<Info>() {
             @Override
             public void onResponse(Call<Info> call, Response<Info> response) {
@@ -122,7 +122,7 @@ public class SearchFragmentViewModel extends ViewModel {
     }
 
     public void calledSize(final String pId) {
-        Call<SizeExample> callSize = restInterface.getSize("flickr.photos.getSizes", "c0b00b9ef6c886b9bc297f5e127d9f84", pId, "json", 1);
+        Call<SizeExample> callSize = restInterface.getSize("flickr.photos.getSizes", "/* FLICKR API KEY*/", pId, "json", 1);
         callSize.enqueue(new Callback<SizeExample>() {
             @Override
             public void onResponse(Call<SizeExample> call, Response<SizeExample> response) {
@@ -147,7 +147,7 @@ public class SearchFragmentViewModel extends ViewModel {
     }
 
     public void calledPost(String searchedWord, int pageCount) {
-        Call<Post> callPost = restInterface.getPost("flickr.photos.Search", "c0b00b9ef6c886b9bc297f5e127d9f84", searchedWord, 1, 25, pageCount, "json", 1);
+        Call<Post> callPost = restInterface.getPost("flickr.photos.Search", "/* FLICKR API KEY*/", searchedWord, 1, 25, pageCount, "json", 1);
         callPost.enqueue(new Callback<Post>() {
             @Override
             public void onResponse(Call<Post> call, Response<Post> response) {
